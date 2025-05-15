@@ -5,6 +5,9 @@ import 'login.dart';
 import 'signup.dart';
 import 'welcome.dart';
 import 'dashboard.dart';
+import 'settings.dart';
+import 'edit_profile.dart';
+import 'create_note.dart';
 
 void main() {
   runApp(const MainApp());
@@ -16,7 +19,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignUp(),
+      home: CreateNoteScreen(),
     );
   }
 }
