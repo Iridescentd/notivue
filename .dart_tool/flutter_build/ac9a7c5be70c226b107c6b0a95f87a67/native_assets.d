@@ -1,0 +1,1 @@
+ G:\\nopal\\Codes\\PPB\\notivue\\.dart_tool\\flutter_build\\ac9a7c5be70c226b107c6b0a95f87a67\\native_assets.yaml: 
