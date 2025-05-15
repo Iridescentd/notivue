@@ -156,7 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             elevation: 2,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/dashboard'); // Ganti dengan halaman tujuan (dashboard atau scree)
+                          },
                           child: const Text(
                             'Log in',
                             style: TextStyle(

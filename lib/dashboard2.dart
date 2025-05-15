@@ -43,20 +43,6 @@ class Dashboard2 extends StatelessWidget {
       // Added Padding here, similar to _buildBottomSheetOption
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: PopupMenuButton<String>(
-        onSelected: (String value) {
-          Navigator.pop(context);
-          // Handle menu selection
-          switch (value) {
-            case 'camera':
-              // TODO: Implement camera functionality
-              // print('Camera selected');
-              break;
-            case 'gallery':
-              // TODO: Implement gallery functionality
-              // print('Gallery selected');
-              break;
-          }
-        },
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
           const PopupMenuItem<String>(
             value: 'camera',
@@ -149,14 +135,6 @@ class Dashboard2 extends StatelessWidget {
                       // TODO: Implement New Notes action
                       print('New Notes tapped');
                     }),
-                    const SizedBox(height: 20),
-                    FloatingActionButton(
-                      mini: true,
-                      backgroundColor:
-                          const Color(0xFFFFF176), // Yellow color like the FAB
-                      onPressed: () => Navigator.pop(context), // Close button
-                      child: const Icon(Icons.close, color: Colors.black87),
-                    ),
                     const SizedBox(height: 20), // Some padding at the bottom
                   ],
                 ),
@@ -178,6 +156,7 @@ class Dashboard2 extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF5C6BC0),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 120,

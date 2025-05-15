@@ -178,6 +178,7 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF5C6BC0),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 120,

@@ -17,7 +17,16 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Dashboard2(),
+            initialRoute: '/',
+      routes: {
+        '/': (context) => const Splash1(),     // First screen
+        '/splash2': (context) => const Splash2(),
+        '/welcome': (context) => const WelcomePage(),
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUp(),
+        '/dashboard': (context) => const Dashboard(),
+        '/dashboard2': (context) => const Dashboard2(),
+      },
     );
   }
 }
