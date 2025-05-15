@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notivue/widget/TaskCard.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
