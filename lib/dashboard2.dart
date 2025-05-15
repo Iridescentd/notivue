@@ -250,8 +250,8 @@ class Dashboard2 extends StatelessWidget {
             ),
           ),
           TaskCard(
-            title: 'Math Homework',
-            completedTasks: 0,
+            title: 'Tugas PPB',
+            completedTasks: 3,
             totalTasks: 20,
             tags: ['To-do', 'School'],
             imageUrl:
