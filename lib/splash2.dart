@@ -83,7 +83,7 @@ class Splash2 extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned( 
+              Positioned(
                 left: 0,
                 right: 0,
                 top: 830,
@@ -91,34 +91,34 @@ class Splash2 extends StatelessWidget {
                   child: SizedBox(
                     width: 330,
                     height: 51,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF7F7F7),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        side: const BorderSide(
-                          width: 3,
-                          color: Color(0xFF40413F),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF7F7F7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: const BorderSide(
+                            width: 3,
+                            color: Color(0xFF40413F),
+                          ),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        // TODO: Tambahkan aksi ketika tombol Log in ditekan
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      child: const Text(
+                        'Log in',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF1F202B),
+                          fontSize: 28,
+                          fontFamily: 'Gilroy-SemiBold',
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                      elevation: 0,
                     ),
-                    onPressed: () {
-                      // TODO: Tambahkan aksi ketika tombol Log in ditekan
-                    },
-                    child: const Text(
-                      'Log in',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                      color: Color(0xFF1F202B),
-                      fontSize: 28,
-                      fontFamily: 'Gilroy-SemiBold',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),  
-
                   ),
-                ),  
                 ),
               ),
               Positioned(
@@ -141,6 +141,7 @@ class Splash2 extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO: Tambahkan aksi ketika tombol Sign up ditekan
+                      Navigator.pushNamed(context, '/signup');
                     },
                     child: const Text(
                       'Sign up',

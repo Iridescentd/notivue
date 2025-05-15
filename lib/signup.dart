@@ -14,7 +14,8 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController dobController = TextEditingController();
 
   @override
@@ -97,7 +98,8 @@ class _SignUpState extends State<SignUp> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
@@ -135,7 +137,8 @@ class _SignUpState extends State<SignUp> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
@@ -174,7 +177,8 @@ class _SignUpState extends State<SignUp> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
@@ -213,7 +217,8 @@ class _SignUpState extends State<SignUp> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
@@ -257,13 +262,15 @@ class _SignUpState extends State<SignUp> {
                                 lastDate: DateTime.now(),
                               );
                               if (pickedDate != null) {
-                                dobController.text = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                dobController.text =
+                                    "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
                               }
                             },
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(
@@ -292,7 +299,8 @@ class _SignUpState extends State<SignUp> {
                                   style: TextStyle(
                                     color: const Color(0xFF1F202B),
                                     fontSize: 24,
-                                    fontFamily: GoogleFonts.pangolin().fontFamily,
+                                    fontFamily:
+                                        GoogleFonts.pangolin().fontFamily,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -315,7 +323,8 @@ class _SignUpState extends State<SignUp> {
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 24,
-                                      fontFamily: GoogleFonts.pangolin().fontFamily,
+                                      fontFamily:
+                                          GoogleFonts.pangolin().fontFamily,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -334,7 +343,8 @@ class _SignUpState extends State<SignUp> {
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 24,
-                                      fontFamily: GoogleFonts.pangolin().fontFamily,
+                                      fontFamily:
+                                          GoogleFonts.pangolin().fontFamily,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -388,7 +398,8 @@ class _SignUpState extends State<SignUp> {
                         ],
                       ),
                       maxLines: 2,
-                      overflow: TextOverflow.visible, // Agar teks tidak terpotong
+                      overflow:
+                          TextOverflow.visible, // Agar teks tidak terpotong
                       softWrap: true,
                     ),
                   ),
@@ -411,30 +422,41 @@ class _SignUpState extends State<SignUp> {
                         ),
                         elevation: 0,
                       ),
-                      onPressed: agreeTerms ? () {
-                        // Validasi sederhana
-                        if (nameController.text.isEmpty ||
-                            emailController.text.isEmpty ||
-                            passwordController.text.isEmpty ||
-                            confirmPasswordController.text.isEmpty ||
-                            dobController.text.isEmpty ||
-                            selectedGender == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please fill in all the data!')),
-                          );
-                          return;
-                        }
-                        if (passwordController.text != confirmPasswordController.text) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Password does not match!')),
-                          );
-                          return;
-                        }
-                        // Lakukan proses sign up di sini
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Signed up successfully!')),
-                        );
-                      } : null,
+                      onPressed: agreeTerms
+                          ? () {
+                              // Validasi sederhana
+                          //     if (nameController.text.isEmpty ||
+                          //         emailController.text.isEmpty ||
+                          //         passwordController.text.isEmpty ||
+                          //         confirmPasswordController.text.isEmpty ||
+                          //         dobController.text.isEmpty ||
+                          //         selectedGender == null) {
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         const SnackBar(
+                          //             content:
+                          //                 Text('Please fill in all the data!')),
+                          //       );
+                          //       return;
+                          //     }
+                          //     if (passwordController.text !=
+                          //         confirmPasswordController.text) {
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         const SnackBar(
+                          //             content:
+                          //                 Text('Password does not match!')),
+                          //       );
+                          //       return;
+                          //     }
+                          //     // Lakukan proses sign up di sini
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       const SnackBar(
+                          //           content: Text('Signed up successfully!')),
+                          //     );
+                              Navigator.pushReplacementNamed(
+                                  context, '/welcome');
+                            }
+                          : null,
+                          // : null,
                       child: const Text(
                         'Sign up',
                         style: TextStyle(

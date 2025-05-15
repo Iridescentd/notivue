@@ -64,6 +64,7 @@ flutter:
     - assets/images/n-dark.png
     - assets/images/bg-splash.png
     - assets/images/group.png
+    - assets/notivue/background/banner.jpg
     - assets/images/banner.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

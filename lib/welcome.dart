@@ -75,7 +75,10 @@ class WelcomePage extends StatelessWidget {
                     ),
                     elevation: 1,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    // Aksi tombol (ganti dengan navigasi ke halaman selanjutnya)
+                    Navigator.pushNamed(context, '/dashboard');
+                  },
                   child: const Text(
                     "LET'S DO IT",
                     style: TextStyle(
