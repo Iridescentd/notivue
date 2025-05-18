@@ -29,6 +29,9 @@ class MainApp extends StatelessWidget {
         '/signup': (context) => const SignUp(),
         '/dashboard': (context) => const Dashboard(),
         '/dashboard2': (context) => const Dashboard2(),
+        '/settings': (context) => const SettingsScreen(),
+        '/notes': (context) => const CreateNoteScreen(),
+        '/edit_profile': (context) => const EditProfileScreen(),
       },
     );
   }
