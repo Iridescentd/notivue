@@ -8,6 +8,7 @@ class TaskCard extends StatelessWidget {
   final List<String> tags;
   final String imageUrl;
   final VoidCallback onDelete;
+  final bool isAssetImage;
 
   const TaskCard({
     super.key,
@@ -17,6 +18,7 @@ class TaskCard extends StatelessWidget {
     required this.tags,
     required this.imageUrl,
     required this.onDelete,
+    this.isAssetImage = false,
   });
 
   @override
@@ -48,12 +50,19 @@ class TaskCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(20)),
-                  child: Image.network(
-                    imageUrl,
-                    width: double.infinity,
-                    height: 160,
-                    fit: BoxFit.cover,
-                  ),
+                  child: isAssetImage
+                      ? Image.asset(
+                          imageUrl,
+                          width: double.infinity,
+                          height: 160,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.network(
+                          imageUrl,
+                          width: double.infinity,
+                          height: 160,
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 Positioned(
                   top: 8,

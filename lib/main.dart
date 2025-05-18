@@ -6,6 +6,9 @@ import 'signup.dart';
 import 'welcome.dart';
 import 'dashboard.dart';
 import 'dashboard2.dart';
+import 'settings.dart';
+import 'edit_profile.dart';
+import 'create_note.dart';
 
 void main() {
   runApp(const MainApp());
@@ -26,6 +29,9 @@ class MainApp extends StatelessWidget {
         '/signup': (context) => const SignUp(),
         '/dashboard': (context) => const Dashboard(),
         '/dashboard2': (context) => const Dashboard2(),
+        '/settings': (context) => const SettingsScreen(),
+        '/notes': (context) => const CreateNoteScreen(),
+        '/edit_profile': (context) => const EditProfileScreen(),
       },
     );
   }

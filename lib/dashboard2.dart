@@ -233,10 +233,10 @@ class Dashboard2 extends StatelessWidget {
             completedTasks: 3,
             totalTasks: 20,
             tags: ['To-do', 'School'],
-            imageUrl:
-                "https://github.com/Iridescentd/notivue/blob/main/assets/notivue/background/banner.jpg?raw=true",
+            imageUrl: 'assets/images/banner.jpg',
+            isAssetImage: true,
             onDelete: () {
-              // masih nanti
+              // Handle delete action
             },
           )
         ],

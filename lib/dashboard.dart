@@ -133,7 +133,7 @@ class Dashboard extends StatelessWidget {
                     }),
 
                     _buildNewImageOption(
-                        bc), // Using the simpler PopupMenuButton approach
+                        bc), // Menggunakan fungsi yang lebih sederhana
 
                     _buildBottomSheetOption(
                         bc, 'New To-do list', Icons.list_alt_outlined,
@@ -147,6 +147,7 @@ class Dashboard extends StatelessWidget {
                         (buttonContext) {
                       Navigator.pop(bc);
                       // TODO: Implement New Notes action
+                      Navigator.pushNamed(context, '/notes');
                       print('New Notes tapped');
                     }),
                     const SizedBox(height: 20),
@@ -168,7 +169,7 @@ class Dashboard extends StatelessWidget {
     );
   }
 
-  // At the top of your build method
+  // Diatas adalah method untuk membuat bottom sheet/popup menu
 
   @override
   Widget build(BuildContext context) {
@@ -216,12 +217,15 @@ class Dashboard extends StatelessWidget {
           SizedBox(
             width: 50,
             height: 50,
-            child: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.3),
-              child: const Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 25,
+            child: GestureDetector(
+              onTap: () => Navigator.pushNamed(context, '/settings'),
+              child: CircleAvatar(
+                backgroundColor: Colors.white.withOpacity(0.3),
+                child: const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 25,
+                ),
               ),
             ),
           ),
