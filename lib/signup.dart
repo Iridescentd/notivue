@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'utils/constants.dart';
+import 'dart:developer' as developer;
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -17,6 +20,136 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController dobController = TextEditingController();
+
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  Future<void> _signUp() async {
+    if (!agreeTerms) {
+      setState(() {
+        _errorMessage = 'Please agree to the terms and conditions';
+      });
+      return;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      setState(() {
+        _errorMessage = 'Passwords do not match';
+      });
+      return;
+    }
+
+    if (nameController.text.trim().isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter your name';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    String? formattedDob;
+    if (dobController.text.isNotEmpty) {
+      try {
+        final parts = dobController.text.split('/');
+        if (parts.length == 3) {
+          formattedDob =
+              '${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}';
+        }
+      } catch (e) {
+        developer.log('Error parsing date_of_birth:', error: e);
+      }
+    }
+
+    try {
+      // 1. Sign up the user
+      developer.log(
+          'Attempting to sign up user with email: ${emailController.text.trim()}');
+
+      final AuthResponse response = await supabase.auth.signUp(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (response.user == null) {
+        throw Exception('Signup failed: No user returned');
+      }
+
+      developer.log('User signed up successfully, creating profile...');
+
+      // 2. Create the user's profile
+      await supabase.from('profiles').insert({
+        'id': response.user!.id,
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'date_of_birth': formattedDob,
+        'gender': selectedGender,
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }).select();
+
+      developer.log('Profile created successfully');
+
+      if (mounted) {
+        if (response.user!.emailConfirmedAt == null &&
+            supabase.auth.currentSession == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Sign up successful! Please check your email to confirm.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pushReplacementNamed(context, '/login');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign up successful! You are now logged in.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pushReplacementNamed(context, '/welcome');
+        }
+      }
+    } on AuthException catch (e) {
+      developer.log('Auth error during signup:', error: e);
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.message;
+        });
+      }
+    } catch (e) {
+      developer.log('Unexpected error during signup:', error: e);
+      if (mounted) {
+        setState(() {
+          if (e.toString().contains('404')) {
+            _errorMessage = 'Unable to create profile. Please contact support.';
+          } else {
+            _errorMessage = 'An unexpected error occurred: ${e.toString()}';
+          }
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    dobController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -234,6 +367,16 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ),
                         ),
+                        if (_errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Text(
+                              _errorMessage!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 14),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         const SizedBox(height: 10),
                         SizedBox(
                           width: 220,
@@ -375,7 +518,7 @@ class _SignUpState extends State<SignUp> {
                   top: 805,
                   child: SizedBox(
                     width: 312,
-                    height: 40, // Ubah tinggi agar muat 2 baris
+                    height: 40,
                     child: Text.rich(
                       TextSpan(
                         style: TextStyle(
@@ -398,8 +541,7 @@ class _SignUpState extends State<SignUp> {
                         ],
                       ),
                       maxLines: 2,
-                      overflow:
-                          TextOverflow.visible, // Agar teks tidak terpotong
+                      overflow: TextOverflow.visible,
                       softWrap: true,
                     ),
                   ),
@@ -422,50 +564,18 @@ class _SignUpState extends State<SignUp> {
                         ),
                         elevation: 0,
                       ),
-                      onPressed: agreeTerms
-                          ? () {
-                              // Validasi sederhana
-                          //     if (nameController.text.isEmpty ||
-                          //         emailController.text.isEmpty ||
-                          //         passwordController.text.isEmpty ||
-                          //         confirmPasswordController.text.isEmpty ||
-                          //         dobController.text.isEmpty ||
-                          //         selectedGender == null) {
-                          //       ScaffoldMessenger.of(context).showSnackBar(
-                          //         const SnackBar(
-                          //             content:
-                          //                 Text('Please fill in all the data!')),
-                          //       );
-                          //       return;
-                          //     }
-                          //     if (passwordController.text !=
-                          //         confirmPasswordController.text) {
-                          //       ScaffoldMessenger.of(context).showSnackBar(
-                          //         const SnackBar(
-                          //             content:
-                          //                 Text('Password does not match!')),
-                          //       );
-                          //       return;
-                          //     }
-                          //     // Lakukan proses sign up di sini
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       const SnackBar(
-                          //           content: Text('Signed up successfully!')),
-                          //     );
-                              Navigator.pushReplacementNamed(
-                                  context, '/welcome');
-                            }
-                          : null,
-                          // : null,
-                      child: const Text(
-                        'Sign up',
-                        style: TextStyle(
-                          color: Color(0xFF1F202B),
-                          fontSize: 28,
-                          fontFamily: 'Gilroy-SemiBold',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      onPressed: _isLoading ? null : _signUp,
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              'Sign up',
+                              style: TextStyle(
+                                color: Color(0xFF1F202B),
+                                fontSize: 28,
+                                fontFamily: 'Gilroy-SemiBold',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                     ),
                   ),
                 ),

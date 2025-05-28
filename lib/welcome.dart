@@ -77,7 +77,7 @@ class WelcomePage extends StatelessWidget {
                   ),
                   onPressed: () {
                     // Aksi tombol (ganti dengan navigasi ke halaman selanjutnya)
-                    Navigator.pushNamed(context, '/dashboard');
+                    Navigator.pushReplacementNamed(context, '/dashboard');
                   },
                   child: const Text(
                     "LET'S DO IT",

@@ -2,291 +2,488 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notivue/widget/TaskCard.dart';
+import 'package:notivue/create_note.dart';
+import 'package:notivue/settings.dart';
+import 'models/note.dart';
+import 'services/note_service.dart';
+import 'utils/constants.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
-  Widget _buildBottomSheetOption(
-      BuildContext context, // This is 'bc' from showModalBottomSheet
-      String title,
-      IconData icon,
-      void Function(BuildContext buttonContext) onTapWithButtonContext) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Builder(
-        builder: (BuildContext itemButtonContext) {
-          return ElevatedButton.icon(
-            icon: Icon(icon, color: Colors.black87),
-            label: Text(title,
-                style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
-                    fontFamily: GoogleFonts.pangolin().fontFamily)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFF176), // Yellow color
-              minimumSize: const Size(double.infinity, 50), // Make buttons wide
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: () {
-              onTapWithButtonContext(itemButtonContext);
-            },
-          );
-        },
-      ),
-    );
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  final _noteService = NoteService();
+  List<Note> _notes = [];
+  bool _isLoading = true;
+  String _searchQuery = '';
+  bool _isFabMenuOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotes();
   }
 
-  Widget _buildNewImageOption(BuildContext context) {
-    return Padding(
-      // Added Padding here, similar to _buildBottomSheetOption
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: PopupMenuButton<String>(
-        onSelected: (String value) {
-          Navigator.pop(context);
-          // Handle menu selection
-          switch (value) {
-            case 'camera':
-              // TODO: Implement camera functionality
-              // print('Camera selected');
-              break;
-            case 'gallery':
-              // TODO: Implement gallery functionality
-              // print('Gallery selected');
-              break;
-          }
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-          const PopupMenuItem<String>(
-            value: 'camera',
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.camera_alt, color: Colors.black54),
-                SizedBox(width: 8),
-                Text('Take a Photo'),
-              ],
-            ),
-          ),
-          const PopupMenuItem<String>(
-            value: 'gallery',
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.photo_library, color: Colors.black54),
-                SizedBox(width: 8),
-                Text('Choose from Gallery'),
-              ],
-            ),
-          ),
-        ],
-        child: Container(
-          height: 50,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFF176), // Yellow color
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.image_outlined, color: Colors.black87),
-              SizedBox(width: 8), // Spacing between icon and text
-              Text('New Image',
-                  style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                      fontFamily: GoogleFonts.pangolin().fontFamily)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showAddOptionsBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent, // Make sheet background transparent
-      builder: (BuildContext bc) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Color.fromARGB(0, 92, 107,
-                192), // Same as page background or a bit lighter/darker
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    _buildBottomSheetOption(
-                        bc, 'New Audio', Icons.audiotrack_outlined,
-                        (buttonContext) {
-                      Navigator.pop(bc); // Close bottom sheet
-                      // TODO: Implement New Audio action
-                      print('New Audio tapped');
-                    }),
-
-                    _buildNewImageOption(
-                        bc), // Menggunakan fungsi yang lebih sederhana
-
-                    _buildBottomSheetOption(
-                        bc, 'New To-do list', Icons.list_alt_outlined,
-                        (buttonContext) {
-                      Navigator.pop(bc);
-                      // TODO: Implement New To-do list action
-                      print('New To-do list tapped');
-                    }),
-                    _buildBottomSheetOption(
-                        bc, 'New Notes', Icons.note_add_outlined,
-                        (buttonContext) {
-                      Navigator.pop(bc);
-                      // TODO: Implement New Notes action
-                      Navigator.pushNamed(context, '/notes');
-                      print('New Notes tapped');
-                    }),
-                    const SizedBox(height: 20),
-                    FloatingActionButton(
-                      mini: true,
-                      backgroundColor:
-                          const Color(0xFFFFF176), // Yellow color like the FAB
-                      onPressed: () => Navigator.pop(context), // Close button
-                      child: const Icon(Icons.close, color: Colors.black87),
-                    ),
-                    const SizedBox(height: 20), // Some padding at the bottom
-                  ],
-                ),
-              ),
-            ],
-          ),
+  Future<void> _loadNotes() async {
+    setState(() => _isLoading = true);
+    try {
+      final notes = await _noteService.getNotes();
+      if (mounted) {
+        setState(() {
+          _notes = notes;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading notes: ${e.toString()}')),
         );
+      }
+    }
+  }
+
+  Future<void> _deleteNote(String noteId) async {
+    final confirmDelete = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Confirm Delete'),
+              content: const Text('Are you sure you want to delete this note?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Delete'),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!confirmDelete) return;
+
+    try {
+      await _noteService.deleteNote(noteId);
+      if (mounted) {
+        setState(() {
+          _notes.removeWhere((n) => n.id == noteId);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Note deleted successfully')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error deleting note: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
+  List<Note> get _filteredNotes {
+    if (_searchQuery.isEmpty) {
+      return _notes;
+    }
+    return _notes
+        .where((note) =>
+            note.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            note.content.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            (note.tags.any((tag) =>
+                tag.toLowerCase().contains(_searchQuery.toLowerCase()))))
+        .toList();
+  }
+
+  void _toggleFabMenu() {
+    setState(() {
+      _isFabMenuOpen = !_isFabMenuOpen;
+    });
+  }
+
+  Widget _buildFabMenuItem(BuildContext context, String title, IconData icon,
+      VoidCallback onPressed) {
+    return ElevatedButton.icon(
+      icon: Icon(icon, color: Colors.black87, size: 28),
+      label: Text(
+        title,
+        style: GoogleFonts.pangolin(color: Colors.black87, fontSize: 18),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFF1E592),
+        minimumSize: const Size(200, 55),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      ),
+      onPressed: () {
+        _toggleFabMenu();
+        onPressed();
       },
     );
   }
 
-  // Diatas adalah method untuk membuat bottom sheet/popup menu
-
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
+    final String formattedDate =
+        DateFormat('EEEE, d MMMM yyyy').format(DateTime.now());
+
     return Scaffold(
-      backgroundColor: const Color(0xFF5C6BC0),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 120,
-              height: 50,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/Logo-white.png"),
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Good Morning,',
-              style: TextStyle(
-                  fontFamily: GoogleFonts.pangolin().fontFamily,
-                  fontSize: 18,
-                  color: Colors.white.withOpacity(0.7)),
-            ),
-            Text(
-              'Today is, ${DateFormat('EEEE, d MMMM y').format(DateTime.now())}',
-              style: TextStyle(
-                  fontFamily: GoogleFonts.pangolin().fontFamily,
-                  fontSize: 20,
-                  color: Colors.white),
-            ),
-          ],
-        ),
-        actions: [
-          SizedBox(
-            width: 50,
-            height: 50,
-            child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, '/settings'),
-              child: CircleAvatar(
-                backgroundColor: Colors.white.withOpacity(0.3),
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 25,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-        ],
-      ),
-      body: Column(
+      backgroundColor: const Color(0xFF56618A),
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'what you want to find ?',
-                hintStyle: TextStyle(
-                    fontFamily: GoogleFonts.pangolin().fontFamily,
-                    color: Colors.white.withOpacity(0.7)),
-                filled: true,
-                fillColor: Colors.white.withOpacity(0.2),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-                prefixIcon: const Icon(Icons.search, color: Colors.white),
-                suffixIcon: const Icon(Icons.filter_list, color: Colors.white),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-          Expanded(
-            child: Center(
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.lightbulb_outline,
-                    size: 240,
-                    color: Colors.white.withOpacity(0.7),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Notivue',
+                        style: GoogleFonts.righteous(
+                          color: Colors.white,
+                          fontSize: 38,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.account_circle,
+                            color: Colors.white, size: 35),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/settings');
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Text(
-                    "Let's start with what's\nhappening today",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: GoogleFonts.pangolin().fontFamily,
-                      fontSize: 25,
-                      color: Colors.white.withOpacity(0.7),
+                    'Today is,',
+                    style: GoogleFonts.pangolin(
+                      color: Colors.white,
+                      fontSize: 18,
                     ),
+                  ),
+                  Text(
+                    formattedDate,
+                    style: GoogleFonts.pangolin(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value;
+                            });
+                          },
+                          style: GoogleFonts.pangolin(color: Colors.black87),
+                          decoration: InputDecoration(
+                            hintText: 'what you want to find ?',
+                            hintStyle:
+                                GoogleFonts.pangolin(color: Colors.black54),
+                            prefixIcon:
+                                const Icon(Icons.search, color: Colors.black54),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 15),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.filter_list,
+                              color: Colors.black54, size: 30),
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Filter button pressed')),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(
+                            child:
+                                CircularProgressIndicator(color: Colors.white))
+                        : _filteredNotes.isEmpty && _searchQuery.isEmpty
+                            ? _buildEmptyState()
+                            : _filteredNotes.isEmpty && _searchQuery.isNotEmpty
+                                ? _buildNoResultsState()
+                                : _buildNotesList(_filteredNotes),
                   ),
                 ],
               ),
             ),
           ),
+          if (_isFabMenuOpen)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _toggleFabMenu,
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _buildFabMenuItem(
+                          context, 'New Audio', Icons.audiotrack_outlined, () {
+                        print('New Audio Tapped');
+                      }),
+                      const SizedBox(height: 12),
+                      _buildFabMenuItem(
+                          context, 'New Image', Icons.image_outlined, () {
+                        print('New Image Tapped');
+                      }),
+                      const SizedBox(height: 12),
+                      _buildFabMenuItem(
+                          context, 'New To-do list', Icons.list_alt_outlined,
+                          () {
+                        print('New To-do list Tapped');
+                      }),
+                      const SizedBox(height: 12),
+                      _buildFabMenuItem(
+                          context, 'New notes', Icons.note_add_outlined,
+                          () async {
+                        final result =
+                            await Navigator.pushNamed(context, '/notes');
+                        if (result == true) {
+                          _loadNotes();
+                        }
+                      }),
+                      const SizedBox(height: 30),
+                      FloatingActionButton(
+                        backgroundColor: const Color(0xFFF1E592),
+                        onPressed: _toggleFabMenu,
+                        child: const Icon(Icons.close,
+                            color: Colors.black87, size: 30),
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddOptionsBottomSheet(context);
-        },
-        backgroundColor: const Color(0xFFFFF176),
-        child: const Icon(Icons.add, color: Colors.black87),
+      floatingActionButton: !_isFabMenuOpen
+          ? FloatingActionButton(
+              onPressed: _toggleFabMenu,
+              backgroundColor: const Color(0xFFF1E592),
+              child: const Icon(Icons.add, color: Colors.black87, size: 35),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.lightbulb_outline,
+            size: 150,
+            color: Colors.white.withOpacity(0.7),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            "Let's start with what's\nhappening today",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.pangolin(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 22,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildNoResultsState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 100,
+            color: Colors.white.withOpacity(0.7),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            "No notes found for '$_searchQuery'",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.pangolin(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotesList(List<Note> notes) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 0, bottom: 8.0, top: 5.0),
+          child: Text(
+            _searchQuery.isEmpty
+                ? "Showing all items"
+                : "Showing search results",
+            style: GoogleFonts.pangolin(
+              color: Colors.white.withOpacity(0.9),
+              fontSize: 16,
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: notes.length,
+            itemBuilder: (context, index) {
+              final note = notes[index];
+              return GestureDetector(
+                onTap: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateNoteScreen(noteToEdit: note),
+                    ),
+                  );
+                  if (result == true && mounted) {
+                    _loadNotes();
+                  }
+                },
+                child: Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  color: const Color(0xFF3A4262),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    note.title,
+                                    style: GoogleFonts.righteous(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline,
+                                      color: Color(0xFFF1E592)),
+                                  onPressed: () => _deleteNote(note.id),
+                                  tooltip: 'Delete Note',
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              note.preview,
+                              style: GoogleFonts.pangolin(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 15,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Wrap(
+                                  spacing: 6.0,
+                                  runSpacing: 4.0,
+                                  children: note.tags.take(2).map((tag) {
+                                    return Chip(
+                                      label: Text(tag,
+                                          style: GoogleFonts.pangolin(
+                                              fontSize: 12,
+                                              color: Colors.black87)),
+                                      backgroundColor:
+                                          tag.toLowerCase() == 'school'
+                                              ? Colors.red[300]
+                                              : Colors.grey[300],
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2),
+                                      visualDensity: VisualDensity.compact,
+                                    );
+                                  }).toList(),
+                                ),
+                                Text(
+                                  '${note.id.length % 5 + 1} item(s)',
+                                  style: GoogleFonts.pangolin(
+                                    color: Colors.white.withOpacity(0.7),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

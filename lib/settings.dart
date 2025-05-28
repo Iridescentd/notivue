@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'utils/constants.dart';
+import 'dart:math';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -9,6 +11,39 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _loading = true;
+  String? _error;
+  Map<String, dynamic>? _profile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not found');
+
+      final response = await supabase
+          .from('profiles')
+          .select()
+          .eq('id', user.id)
+          .single();
+
+      setState(() {
+        _profile = response;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
+
   Widget _buildSettingItem(String title, {VoidCallback? onTap}) {
     return ListTile(
       title: Text(
@@ -19,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: Icon(Icons.chevron_right, color: Colors.black54),
+      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
       onTap: onTap,
     );
   }
@@ -54,6 +89,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = supabase.auth.currentUser;
+    final name = _profile?['name'] as String? ?? 'User';
+    final initials = name.isNotEmpty
+        ? name.substring(0, min(2, name.length)).toUpperCase()
+        : '??';
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacementNamed(context, '/dashboard');
@@ -77,127 +118,153 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Section
-              Center(
+        body: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Colors.purple[100],
-                      child: Text(
-                        'AN',
-                        style: GoogleFonts.poppins(
-                          fontSize: 24,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    // Profile Section
+                    Center(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.purple[100],
+                            child: Text(
+                              initials,
+                              style: GoogleFonts.poppins(
+                                fontSize: 24,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            name,
+                            style: GoogleFonts.poppins(
+                              fontSize: 24,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (user?.email != null)
+                            Text(
+                              user!.email!,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Colors.black54,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Anjasyah Naufal',
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
+
+                    // Account Settings
+                    const SizedBox(height: 20),
+                    _buildSettingItem(
+                      'Edit profile',
+                      onTap: () async {
+                        final result = await Navigator.pushNamed(context, '/edit_profile');
+                        if (result == true) {
+                          _loadProfile(); // Reload profile after editing
+                        }
+                      },
+                    ),
+                    _buildSettingItem(
+                      'Change password',
+                      onTap: () {
+                        // Handle change password
+                      },
+                    ),
+                    _buildSettingItem(
+                      'Privacy & Security',
+                      onTap: () {
+                        // Handle privacy settings
+                      },
+                    ),
+
+                    // Notifications Section
+                    _buildSectionTitle('Notifications', Icons.notifications_none),
+                    _buildSettingItem(
+                      'Notifications',
+                      onTap: () {
+                        // Handle notifications
+                      },
+                    ),
+                    _buildSettingItem(
+                      'App Notifications',
+                      onTap: () {
+                        // Handle app notifications
+                      },
+                    ),
+
+                    // Other Section
+                    _buildSectionTitle('Other', Icons.menu),
+                    _buildSettingItem(
+                      'Language',
+                      onTap: () {
+                        // Handle language settings
+                      },
+                    ),
+                    _buildSettingItem(
+                      'Appearance',
+                      onTap: () {
+                        // Handle appearance settings
+                      },
+                    ),
+                    _buildSettingItem(
+                      'About app',
+                      onTap: () {
+                        // Handle about app
+                      },
+                    ),
+
+                    // Logout Button
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.logout),
+                        label: Text(
+                          'Logout',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF6B6B),
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: () async {
+                          try {
+                            await supabase.auth.signOut();
+                            if (mounted) {
+                              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Error signing out: ${e.toString()}'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
                     ),
                   ],
                 ),
               ),
-
-              // Account Settings
-              const SizedBox(height: 20),
-              _buildSettingItem(
-                'Edit profile',
-                onTap: () {
-                  Navigator.pushNamed(context, '/edit_profile');
-                },
-              ),
-              _buildSettingItem(
-                'Change password',
-                onTap: () {
-                  // Handle change password
-                },
-              ),
-              _buildSettingItem(
-                'Privacy & Security',
-                onTap: () {
-                  // Handle privacy settings
-                },
-              ),
-
-              // Notifications Section
-              _buildSectionTitle('Notifications', Icons.notifications_none),
-              _buildSettingItem(
-                'Notifications',
-                onTap: () {
-                  // Handle notifications
-                },
-              ),
-              _buildSettingItem(
-                'App Notifications',
-                onTap: () {
-                  // Handle app notifications
-                },
-              ),
-
-              // Other Section
-              _buildSectionTitle('Other', Icons.menu),
-              _buildSettingItem(
-                'Language',
-                onTap: () {
-                  // Handle language settings
-                },
-              ),
-              _buildSettingItem(
-                'Appearance',
-                onTap: () {
-                  // Handle appearance settings
-                },
-              ),
-              _buildSettingItem(
-                'About app',
-                onTap: () {
-                  // Handle about app
-                },
-              ),
-
-              // Logout Button
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.logout),
-                  label: Text(
-                    'Logout',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF6B6B),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    elevation: 0,
-                  ),
-                  onPressed: () {
-                    // Handle logout
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
