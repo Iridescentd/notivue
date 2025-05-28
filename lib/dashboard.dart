@@ -154,39 +154,46 @@ class _DashboardState extends State<Dashboard> {
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Notivue',
-                        style: GoogleFonts.righteous(
-                          color: Colors.white,
-                          fontSize: 38,
-                          fontWeight: FontWeight.w400,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            'assets/images/logo-white.png',
+                            width: 150,
+                            height: 50,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            'Today is,',
+                            style: GoogleFonts.pangolin(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: GoogleFonts.pangolin(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.account_circle,
+                              color: Colors.white, size: 35),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/settings');
+                          },
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.account_circle,
-                            color: Colors.white, size: 35),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/settings');
-                        },
-                      ),
                     ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Today is,',
-                    style: GoogleFonts.pangolin(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    formattedDate,
-                    style: GoogleFonts.pangolin(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -440,6 +447,33 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'Created: ${DateFormat.yMd().add_jm().format(note.createdAt.toLocal())}',
+                                    style: GoogleFonts.pangolin(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontSize: 11,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    'Edited: ${DateFormat.yMd().add_jm().format(note.updatedAt.toLocal())}',
+                                    style: GoogleFonts.pangolin(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontSize: 11,
+                                    ),
+                                    textAlign: TextAlign.end,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 12),
                             Row(

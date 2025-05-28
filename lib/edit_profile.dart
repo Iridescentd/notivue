@@ -147,14 +147,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ],
                       ),
-                      Text(
-                        'Notivue',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontFamily: GoogleFonts.pacifico().fontFamily,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      Image.asset(
+                        'assets/images/logo-white.png',
+                        width: 35,
+                        height: 35,
                       ),
                     ],
                   ),
