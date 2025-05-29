@@ -22,38 +22,8 @@ class _Splash1State extends State<Splash1> {
         const Duration(seconds: 2)); // Show splash for 2 seconds
     if (!mounted) return;
 
-    try {
-      // Get current session and check if it's valid
-      final session = supabase.auth.currentSession;
-      final user = supabase.auth.currentUser;
-
-      if (session != null && user != null) {
-        // Check if session is expired
-        final now = DateTime.now().toUtc();
-        final expiresAt = DateTime.fromMillisecondsSinceEpoch(
-          session.expiresAt! * 1000,
-          isUtc: true,
-        );
-
-        if (now.isBefore(expiresAt)) {
-          // Valid session exists
-          if (mounted) {
-            Navigator.of(context).pushReplacementNamed('/dashboard');
-            return;
-          }
-        }
-      }
-
-      // No valid session
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
-    } catch (e) {
-      // Handle any errors by redirecting to login screen as a fallback
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
-      }
-    }
+    // Selalu navigasi ke Splash2 setelah delay
+    Navigator.of(context).pushReplacementNamed('/splash2');
   }
 
   @override
