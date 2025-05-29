@@ -1,0 +1,12 @@
+com.llfbandit.app_links-core-1.6.0-0 C:\Users\User\.gradle\caches\8.9\transforms\48c840758b0867e74a14084fd39b5ad1\transformed\core-1.6.0\res
+com.llfbandit.app_links-jetified-window-java-1.0.0-beta04-1 C:\Users\User\.gradle\caches\8.9\transforms\7f5db3c55b19c73836e1153bca3b2ff3\transformed\jetified-window-java-1.0.0-beta04\res
+com.llfbandit.app_links-jetified-window-1.0.0-beta04-2 C:\Users\User\.gradle\caches\8.9\transforms\93e1bd514003a8d1b21fd99c2b1b08ab\transformed\jetified-window-1.0.0-beta04\res
+com.llfbandit.app_links-jetified-annotation-experimental-1.1.0-3 C:\Users\User\.gradle\caches\8.9\transforms\e9c3a30bd4f492e48d2d4f8bfa86ca5d\transformed\jetified-annotation-experimental-1.1.0\res
+com.llfbandit.app_links-main-4 C:\Users\User\AppData\Local\Pub\Cache\hosted\pub.dev\app_links-6.4.0\android\src\main\res
+com.llfbandit.app_links-release-5 C:\Users\User\AppData\Local\Pub\Cache\hosted\pub.dev\app_links-6.4.0\android\src\release\res
+com.llfbandit.app_links-pngs-6 G:\nopal\Codes\PPB\notivue\build\app_links\generated\res\pngs\release
+com.llfbandit.app_links-resValues-7 G:\nopal\Codes\PPB\notivue\build\app_links\generated\res\resValues\release
+com.llfbandit.app_links-rs-8 G:\nopal\Codes\PPB\notivue\build\app_links\generated\res\rs\release
+com.llfbandit.app_links-mergeReleaseResources-9 G:\nopal\Codes\PPB\notivue\build\app_links\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.llfbandit.app_links-mergeReleaseResources-10 G:\nopal\Codes\PPB\notivue\build\app_links\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.llfbandit.app_links-merged_res-11 G:\nopal\Codes\PPB\notivue\build\app_links\intermediates\merged_res\release

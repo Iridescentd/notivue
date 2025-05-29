@@ -56,3 +56,7 @@ android {
 flutter {
     source = "../.."
 }
+
+tasks.matching { it.name.startsWith("export") && it.name.contains("ReleaseConsumerProguardFiles") && it.name.contains("shared_preferences_android") }.configureEach {
+    doNotTrackState("Output directory not accessible during configuration for shared_preferences_android.")
+}
